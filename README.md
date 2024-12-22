@@ -12,4 +12,4 @@ Ce sous-domaine disponible sur [logs.sylvain.pro](https://logs.sylvain.pro) perm
 Elle récupère le **JSON** généré par l'API en **temps réel** et l'affiche proprement.  
 
 J'ai bien aimé faire un **nouveau style d'interface** pour ce projet, en sachant que j'aime les interfaces **simples** et **modernes**, j'ai ajouté peu d'informations pour éviter de **surcharger**.  
-> *Comme le projet est assez modulable, il est possible de créer votre propre **LogCenter** sur [flowers.sylvain.pro](https://flowers.sylvain.pro) !.*
+> *Comme le projet est assez modulable, il est possible de créer votre propre **LogCenter** sur [flowers.sylvain.pro](https://flowers.sylvain.pro) !*
