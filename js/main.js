@@ -1,5 +1,6 @@
 let logs = [];
 
+/* Fetch logs from API & update logs */
 async function fetchLogs() {
     try {
         const data = await (await fetch('https://api.sylvain.pro/logs')).json();
@@ -17,6 +18,7 @@ async function fetchLogs() {
     }
 }
 
+/* Update the timeline with new logs */
 function updateTimeline(logs) {
     const timeline = document.getElementById('timeline');
     logs.forEach(log => {
@@ -35,12 +37,13 @@ function updateTimeline(logs) {
                 <div class="status ${status}">${log.status}</div>
                 <div class="method ${method}">${log.method}</div>
                 <div class="request">${log.method} ${log.url}</div>
-                <div class="date">${new Date(log.timestamp).toLocaleString()} &nbsp;-&nbsp; ${log.duration} ${log.platform ? '&nbsp;-&nbsp; ' + log.platform : ''}</div>
+                <div class="subtitle">${new Date(log.timestamp).toLocaleString()} &nbsp;-&nbsp; ${log.duration} ${log.platform ? '&nbsp;-&nbsp; ' + log.platform : ''}</div>
             </div>
         `;
         timeline.prepend(logElement);
     });
 }
 
+/* Fetch logs on page load & then every 2 seconds */
 setInterval(fetchLogs, 2000);
 fetchLogs();
