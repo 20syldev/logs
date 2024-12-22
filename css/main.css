@@ -89,6 +89,11 @@ body {
     text-overflow: ellipsis;
 }
 
+::-webkit-scrollbar {
+    display: none;
+}
+
+/* Mode sombre */
 @media (prefers-color-scheme: dark) {
     body {
         background: #1f2937;
