@@ -1,8 +1,8 @@
 <div align="center">
   <a href="https://logs.sylvain.pro"><img src="https://logs.sylvain.pro/images/logo.png" alt="Logo" width="25%" height="auto"></a>
 
-  # API Logs - Sylvain
   [![Version](https://custom-icon-badges.demolab.com/badge/Version%20:-v1.0.0-6479ee?logo=logs.sylvain.pro&labelColor=23272A)](https://github.com/20syldev/logs/releases/latest)
+  # API - Request Logs Interface
 </div>
 
 ---
@@ -12,4 +12,4 @@ Ce sous-domaine disponible sur [logs.sylvain.pro](https://logs.sylvain.pro) perm
 Elle récupère le **JSON** généré par l'API en **temps réel** et l'affiche proprement.  
 
 J'ai bien aimé faire un **nouveau style d'interface** pour ce projet, en sachant que j'aime les interfaces **simples** et **modernes**, j'ai ajouté peu d'informations pour éviter de **surcharger**.  
-> *Comme le projet est assez modulable, il est possible que j'en fasse une version grand public sur [flowers.sylvain.pro](https://flowers.sylvain.pro).*
+> *Comme le projet est assez modulable, il est possible de créer votre propre **LogCenter** sur [flowers.sylvain.pro](https://flowers.sylvain.pro) !.*
