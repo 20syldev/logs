@@ -84,8 +84,8 @@ body {
     text-overflow: ellipsis;
 }
 
-.date {
 /* Subtitle informations */
+.subtitle {
     font-size: 14px;
     color: #6b7280;
     white-space: nowrap;
