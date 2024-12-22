@@ -1,0 +1,103 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    scroll-behavior: smooth;
+}
+
+body {
+    background: #f5f7fa;
+    color: #1f2937;
+    font-family: 'Poppins', sans-serif;
+    margin: 20px;
+    transition: all 0.3s;
+}
+
+.timeline {
+    max-width: 900px;
+    margin: 0 auto;
+    position: relative;
+}
+.timeline:before {
+    content: '';
+    background: #d9d9d9;
+    position: absolute;
+    top: 0;
+    left: 20px;
+    width: 4px;
+    height: 100%;
+}
+.timeline-item {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 20px;
+}
+.timeline-item:last-child {
+    margin-bottom: 0;
+}
+.timeline-item-content {
+    background: #fff;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.method, .status {
+    display: inline-block;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 2.5px 15px;
+    border-radius: 20px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.method-get {
+    background: #517fff;
+}
+.method-post {
+    background: #27be8a;
+}
+.status-200 {
+    background: #27be8a;
+}
+.status-error {
+    background: #f77777;
+}
+
+.request {
+    font-weight: bold;
+    margin: 10px 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.date {
+    font-size: 14px;
+    color: #6b7280;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+@media (prefers-color-scheme: dark) {
+    body {
+        background: #1f2937;
+        color: #f5f7fa;
+    }
+    .timeline:before {
+        background: #6b7280;
+    }
+    .timeline-item-content {
+        background: #374151;
+    }
+}
