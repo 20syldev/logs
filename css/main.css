@@ -65,6 +65,9 @@ body {
 .status-200 {
     background: #27be8a;
 }
+.status-302 {
+    background: #00aeff;
+}
 .status-error {
     background: #f77777;
 }
