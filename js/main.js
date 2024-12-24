@@ -29,6 +29,7 @@ function updateTimeline(logs) {
         else if (log.method === 'POST') method = 'method-post';
 
         if (log.status === 200) status = 'status-200';
+        else if (log.status === 302) status = 'status-302';
         else if (log.status === 404 || log.status === 500) status = 'status-error';
 
         logElement.classList.add('timeline-item');
