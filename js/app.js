@@ -1,50 +1,51 @@
 let logs = [];
+let fetching = true;
 
 /* Fetch logs from API & update logs */
 async function fetchLogs() {
     try {
-        const data = await (await fetch('https://api.sylvain.pro/logs')).json();
-        const newLogs = data.filter(log =>
-            !logs.some(old =>
-                old.timestamp === log.timestamp &&
-                old.method === log.method &&
-                old.url === log.url
-            )
-        );
+        const response = await fetch('https://api.sylvain.pro/logs');
+        const data = (await response.json()) || [];
+        if (!data.length) {
+            updateTimeline([{
+                timestamp: Date.now(),
+                method: 'Not found',
+                url: '- No logs found at this endpoint',
+                status: 404
+            }]);
+            fetching = false;
+            return;
+        }
+        updateTimeline(data);
         logs = data;
-        updateTimeline(newLogs);
     } catch (error) {
-        console.error('Error fetching logs:', error);
+        console.error('Internal server error:', error);
+        updateTimeline([{
+            timestamp: Date.now(),
+            method: 'Server Error',
+            url: ' - ' + error.message,
+            status: 500
+        }]);
+        fetching = false;
     }
 }
 
 /* Update the timeline with new logs */
-function updateTimeline(logs) {
-    const timeline = document.getElementById('timeline');
-    logs.forEach(log => {
+function updateTimeline(newLogs) {
+    newLogs.forEach(log => {
         const logElement = document.createElement('div');
-        let method, status = '';
-
-        if (log.method === 'GET') method = 'method-get';
-        else if (log.method === 'POST') method = 'method-post';
-
-        if (log.status === 200) status = 'status-200';
-        else if (log.status === 302) status = 'status-302';
-        else if (log.status === 404 || log.status === 500) status = 'status-error';
-
-        logElement.classList.add('timeline-item');
+        logElement.className = 'timeline-item';
         logElement.innerHTML = `
             <div class="timeline-item-content">
-                <div class="status ${status}">${log.status}</div>
-                <div class="method ${method}">${log.method}</div>
+                <div class="status status-${log.status}">${log.status}</div>
+                <div class="method method-${log.method.toLowerCase().replace(' ', '-')}">${log.method}</div>
                 <div class="request">${log.method} ${log.url}</div>
-                <div class="subtitle">${new Date(log.timestamp).toLocaleString()} &nbsp;-&nbsp; ${log.duration} ${log.platform ? '&nbsp;-&nbsp; ' + log.platform : ''}</div>
-            </div>
-        `;
-        timeline.prepend(logElement);
+                <div class="subtitle">${new Date(log.timestamp).toLocaleString()} ${log.duration ? '&nbsp;-&nbsp; ' + log.duration : ''} ${log.platform ? '&nbsp;-&nbsp; ' + log.platform : ''}</div>
+            </div>`;
+        document.getElementById('timeline').prepend(logElement);
     });
 }
 
 /* Fetch logs on page load & then every 2 seconds */
-setInterval(fetchLogs, 2000);
+setInterval(() => { if (fetching) fetchLogs(); }, 2000);
 fetchLogs();
