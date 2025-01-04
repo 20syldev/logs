@@ -1,8 +1,8 @@
 <div align="center">
-  <a href="https://logs.sylvain.pro"><img src="https://logs.sylvain.pro/images/logo.png" alt="Logo" width="25%" height="auto"></a>
+  <a href="https://logs.sylvain.pro"><img src="https://logs.sylvain.pro/assets/images/logo.png" alt="Logo" width="25%" height="auto"/></a>
 
   # API - Request Logs Interface
-  [![Version](https://custom-icon-badges.demolab.com/badge/Version%20:-v1.0.5-6479ee?logo=logs.sylvain.pro&labelColor=23272A)](https://github.com/20syldev/logs/releases/latest)
+  [![Version](https://custom-icon-badges.demolab.com/badge/Version%20:-v1.0.6-6479ee?logo=logs.sylvain.pro&labelColor=23272A)](https://github.com/20syldev/logs/releases/latest)
 </div>
 
 ---
