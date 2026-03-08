@@ -2,7 +2,7 @@
   <a href="https://logs.sylvain.sh"><img src="https://logs.sylvain.sh/assets/images/logo.png" alt="Logo" width="25%" height="auto"/></a>
 
   # API - Request Logs Interface
-  [![Version](https://custom-icon-badges.demolab.com/badge/Version%20:-v1.0.7-6479ee?logo=logs.sylvain.sh&labelColor=23272A)](https://github.com/20syldev/logs/releases/latest)
+  [![Version](https://custom-icon-badges.demolab.com/badge/Version%20:-v1.0.8-6479ee?logo=logs.sylvain.sh&labelColor=23272A)](https://github.com/20syldev/logs/releases/latest)
 </div>
 
 ---
