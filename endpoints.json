@@ -1,0 +1,4 @@
+{
+    "title": "Logs",
+    "endpoints": [{ "name": "API Logs", "url": "https://api.sylvain.sh/logs" }]
+}
