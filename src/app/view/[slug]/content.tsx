@@ -25,7 +25,7 @@ export default function Content({ config }: { config: ViewOptions }) {
     const [selectedHash, setSelectedHash] = useState<string | null>(null);
 
     const endpoint: ViewEndpoint = config.endpoints[activeIndex];
-    const pollingInterval = config.interval ?? defaultInterval;
+    const [pollingInterval, setPollingInterval] = useState(config.interval ?? defaultInterval);
 
     const { entries, status, error, pause, resume, clear } = useDataFetcher({
         api: endpoint.url,
@@ -116,7 +116,7 @@ export default function Content({ config }: { config: ViewOptions }) {
                         status={status}
                         totalCount={entries.length}
                         interval={pollingInterval}
-                        onIntervalChange={() => {}}
+                        onIntervalChange={setPollingInterval}
                         onPause={pause}
                         onResume={resume}
                         onClear={clear}
