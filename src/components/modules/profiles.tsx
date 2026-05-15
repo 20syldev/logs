@@ -7,14 +7,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
-import { Switch } from "@/components/ui/switch";
-import { Check, Copy, Pencil, Plus, Trash2, User } from "lucide-react";
-import {
-    type Profile,
-    type ProfileData,
-    restoreProfileData,
-    snapshotProfileData,
-} from "@/data/profiles";
+import { Check, Pencil, Plus, Trash2, User } from "lucide-react";
+import { type Profile, restoreProfileData, snapshotProfileData } from "@/data/profiles";
 
 interface ProfilesDialogProps {
     open: boolean;
@@ -53,7 +47,6 @@ export default function ProfilesDialog({
     const [adding, setAdding] = useState(false);
     const [newName, setNewName] = useState("");
     const [newDescription, setNewDescription] = useState("");
-    const [copyData, setCopyData] = useState(false);
     const [editingId, setEditingId] = useState<string | null>(null);
     const [editName, setEditName] = useState("");
     const [editDescription, setEditDescription] = useState("");
@@ -79,8 +72,6 @@ export default function ProfilesDialog({
     const handleAdd = () => {
         if (!newName.trim()) return;
 
-        const currentData: ProfileData | undefined = copyData ? snapshotProfileData() : undefined;
-
         saveCurrentToActive();
 
         const profile: Profile = {
@@ -90,13 +81,12 @@ export default function ProfilesDialog({
         };
 
         onProfilesChange((prev) => [...prev, profile]);
-        restoreProfileData(currentData);
+        restoreProfileData(undefined);
         onActiveProfileChange(profile.id);
         router.push("/monitor");
 
         setNewName("");
         setNewDescription("");
-        setCopyData(false);
         setAdding(false);
     };
 
@@ -141,7 +131,6 @@ export default function ProfilesDialog({
             setAdding(false);
             setEditingId(null);
             setConfirmDeleteId(null);
-            setCopyData(false);
         }
     };
 
@@ -241,25 +230,26 @@ export default function ProfilesDialog({
                                         >
                                             <Pencil className="size-3" />
                                         </Button>
-                                        {confirmDeleteId === profile.id ? (
-                                            <Button
-                                                variant="ghost"
-                                                size="sm"
-                                                className="h-6 w-6 p-0 text-destructive hover:bg-destructive/10"
-                                                onClick={() => handleDelete(profile.id)}
-                                            >
-                                                <Check className="size-3" />
-                                            </Button>
-                                        ) : (
-                                            <Button
-                                                variant="ghost"
-                                                size="sm"
-                                                className="h-6 w-6 p-0 hover:bg-foreground/5"
-                                                onClick={() => setConfirmDeleteId(profile.id)}
-                                            >
-                                                <Trash2 className="size-3" />
-                                            </Button>
-                                        )}
+                                        {profiles.length > 1 &&
+                                            (confirmDeleteId === profile.id ? (
+                                                <Button
+                                                    variant="ghost"
+                                                    size="sm"
+                                                    className="h-6 w-6 p-0 text-destructive hover:bg-destructive/10"
+                                                    onClick={() => handleDelete(profile.id)}
+                                                >
+                                                    <Check className="size-3" />
+                                                </Button>
+                                            ) : (
+                                                <Button
+                                                    variant="ghost"
+                                                    size="sm"
+                                                    className="h-6 w-6 p-0 hover:bg-foreground/5"
+                                                    onClick={() => setConfirmDeleteId(profile.id)}
+                                                >
+                                                    <Trash2 className="size-3" />
+                                                </Button>
+                                            ))}
                                     </div>
                                 </>
                             )}
@@ -288,15 +278,6 @@ export default function ProfilesDialog({
                             value={newDescription}
                             onChange={(e) => setNewDescription(e.target.value)}
                         />
-                        {profiles.length > 0 && (
-                            <div className="flex items-center justify-between gap-3 rounded-lg border border-dashed px-3 py-2.5">
-                                <div className="flex items-center gap-2 min-w-0">
-                                    <Copy className="size-3.5 shrink-0 text-muted-foreground" />
-                                    <span className="text-sm">{t("copyData")}</span>
-                                </div>
-                                <Switch checked={copyData} onCheckedChange={setCopyData} />
-                            </div>
-                        )}
                         <div className="flex gap-2">
                             <Button
                                 type="submit"
@@ -314,7 +295,6 @@ export default function ProfilesDialog({
                                     setAdding(false);
                                     setNewName("");
                                     setNewDescription("");
-                                    setCopyData(false);
                                 }}
                             >
                                 {tc("cancel")}

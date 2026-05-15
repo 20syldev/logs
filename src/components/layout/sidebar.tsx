@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "@/i18n/provider";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
@@ -16,7 +16,7 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog";
-import { ChevronsUpDown, Link2, Menu, Plus, Settings2, User, UserPlus, Zap } from "lucide-react";
+import { ChevronsUpDown, Link2, Menu, Plus, Settings2, User, Zap } from "lucide-react";
 import Resize from "./resizer";
 import Stats from "../modules/stats";
 import TransferDialog from "../modules/transfer";
@@ -443,40 +443,43 @@ function ProfileSection() {
     const [activeProfileId, setActiveProfileId] = useLocalStorage<string>("activeProfile", "");
     const [dialogOpen, setDialogOpen] = useState(false);
 
+    useEffect(() => {
+        if (profiles.length === 0) {
+            const profile: Profile = {
+                id: `profile-${Date.now()}`,
+                name: t("defaultName"),
+                description: "",
+            };
+            setProfiles(() => [profile]);
+            setActiveProfileId(profile.id);
+        }
+    }, [profiles.length, setProfiles, setActiveProfileId, t]);
+
     const activeProfile = profiles.find((p) => p.id === activeProfileId);
 
     return (
         <>
             <div className="p-3">
-                {activeProfile ? (
-                    <Button
-                        variant="ghost"
-                        className="flex items-center gap-3 w-full h-auto rounded-lg p-2 pr-3 text-left"
-                        onClick={() => setDialogOpen(true)}
-                    >
-                        <div className="flex items-center justify-center size-8 rounded-md bg-muted shrink-0">
-                            <User className="size-4 text-muted-foreground" />
+                <Button
+                    variant="ghost"
+                    className="flex items-center gap-3 w-full h-auto rounded-lg p-2 pr-3 text-left"
+                    onClick={() => setDialogOpen(true)}
+                >
+                    <div className="flex items-center justify-center size-8 rounded-md bg-muted shrink-0">
+                        <User className="size-4 text-muted-foreground" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                        <div className="text-sm font-medium truncate">
+                            {activeProfile?.name ?? t("defaultName")}
                         </div>
-                        <div className="flex-1 min-w-0">
-                            <div className="text-sm font-medium truncate">{activeProfile.name}</div>
-                            {activeProfile.description && (
-                                <div className="text-xs text-muted-foreground truncate">
-                                    {activeProfile.description}
-                                </div>
-                            )}
-                        </div>
-                        <ChevronsUpDown className="size-3.5 text-muted-foreground shrink-0" />
-                    </Button>
-                ) : (
-                    <Button
-                        variant="ghost"
-                        className="flex items-center gap-2 w-full h-auto rounded-lg px-4 py-2 text-left text-muted-foreground"
-                        onClick={() => setDialogOpen(true)}
-                    >
-                        <UserPlus className="size-4" />
-                        <span className="text-sm">{t("addProfile")}</span>
-                    </Button>
-                )}
+                        {activeProfile?.description && (
+                            <div className="text-xs text-muted-foreground truncate">
+                                {activeProfile.description}
+                            </div>
+                        )}
+                    </div>
+                    <ChevronsUpDown className="size-3.5 text-muted-foreground shrink-0" />
+                </Button>
             </div>
 
             <ProfilesDialog
