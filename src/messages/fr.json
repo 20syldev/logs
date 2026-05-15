@@ -239,7 +239,7 @@
         "profileCount": "{count} profils",
         "switchTo": "Basculer",
         "active": "Actif",
-        "copyData": "Copier les données actuelles",
+        "defaultName": "Profil par défaut",
         "deleteConfirm": "Supprimer ce profil ?"
     },
     "transfer": {
