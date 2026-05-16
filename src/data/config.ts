@@ -11,13 +11,7 @@ interface FlowersConfig {
     view: ViewOptions;
 }
 
-let json: SiteConfig = {};
-try {
-    const path = "../../endpoints.json";
-    json = (await import(path)).default;
-} catch {
-    // No endpoints.json — standalone mode disabled
-}
+const json: SiteConfig = process.env.FLOWERS_CONFIG ? JSON.parse(process.env.FLOWERS_CONFIG) : {};
 
 export const config: FlowersConfig = {
     standalone: Object.keys(json).length > 0,
