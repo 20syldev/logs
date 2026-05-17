@@ -1,12 +1,13 @@
 {
     "name": "logs",
     "private": true,
-    "version": "2.0.2",
+    "version": "2.0.3",
     "type": "module",
     "scripts": {
         "dev": "next dev -H 127.0.0.1 -p 8135",
         "build": "next build",
         "start": "next start",
+        "update": "./scripts/update.sh",
         "format": "./scripts/format.sh",
         "lint": "eslint",
         "check": "tsc --noEmit"
