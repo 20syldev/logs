@@ -85,10 +85,7 @@
             "pinsDesc": "Entries you pinned per endpoint, so they stay visible at the top.",
             "note": "You can export and import all of this data via the transfer feature."
         },
-        "footer": {
-            "legal": "Legal notice",
-            "privacy": "Privacy"
-        }
+        "footer": {}
     },
     "monitor": {
         "home": "Home",
@@ -276,40 +273,6 @@
         "titlePrefix": "Flowers — ",
         "errorSuffix": " Error"
     },
-    "legal": {
-        "title": "Legal notice",
-        "backHome": "Back to home",
-        "editor": "Site publisher",
-        "editorName": "Name: Lambert Sylvain",
-        "editorEmail": "Email: contact@sylvain.sh",
-        "host": "Hosting",
-        "hostName": "Name: GitHub Pages",
-        "hostAddress": "Address: https://github.com",
-        "hostContact": "Contact: https://support.github.com",
-        "domain": "Domain name",
-        "domainRegistrar": "Registrar: Namecheap, Inc.",
-        "domainName": "Domain: flowers.sylvain.sh",
-        "ip": "Intellectual property",
-        "ipContent": "All content on this site (text, images, source code, design) is the exclusive property of its publisher, unless otherwise stated. Any reproduction, representation, or distribution, in whole or in part, of the content of this site without prior authorization is prohibited.",
-        "liability": "Liability",
-        "liabilityContent": "The publisher strives to provide information as accurate as possible. However, they cannot be held responsible for omissions, inaccuracies, or deficiencies in updating this information. The publisher disclaims all liability in the event of technical difficulties encountered when connecting to the site.",
-        "contact": "Contact",
-        "contactContent": "For any questions regarding the legal notice, you can contact me at: contact@sylvain.sh"
-    },
-    "privacy": {
-        "title": "Privacy policy",
-        "backHome": "Back to home",
-        "dataCollected": "Data collected",
-        "dataCollectedContent": "This site does not collect any personal data. There are no contact forms, registration systems, or login mechanisms on this site.",
-        "cookies": "Cookies and local storage",
-        "cookiesContent": "This site does not use any cookies. The only storage mechanism used is the browser's localStorage, solely to save your preferences: theme (light, dark, or system), layout, polling interval, saved endpoints, and presets. Nothing else is stored.",
-        "thirdParty": "Third-party services",
-        "thirdPartyFonts": "This site uses the Google Fonts Outfit typeface served locally by the Next.js framework. No requests are sent to Google servers during your visit.",
-        "analytics": "Analytics and tracking",
-        "analyticsContent": "This site does not use any analytics, tracking, or advertising services. No browsing data is collected or transmitted to third parties.",
-        "rights": "Your rights",
-        "rightsContent": "In accordance with the General Data Protection Regulation (GDPR), you have the right to access, rectify, delete, and port your data. Since no personal data is collected by this site, these rights do not apply in this context.",
-        "contact": "Contact",
-        "contactContent": "For any questions regarding the privacy policy, you can contact me at: contact@sylvain.sh"
-    }
+    "legal": {},
+    "privacy": {}
 }

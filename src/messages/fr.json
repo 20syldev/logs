@@ -85,10 +85,7 @@
             "pinsDesc": "Les entrées que vous avez épinglées par endpoint, pour qu'elles restent visibles en haut.",
             "note": "Vous pouvez exporter et importer toutes ces données via la fonction de transfert."
         },
-        "footer": {
-            "legal": "Mentions légales",
-            "privacy": "Confidentialité"
-        }
+        "footer": {}
     },
     "monitor": {
         "home": "Accueil",
@@ -276,40 +273,6 @@
         "titlePrefix": "Flowers — ",
         "errorSuffix": " Erreur"
     },
-    "legal": {
-        "title": "Mentions légales",
-        "backHome": "Retour à l'accueil",
-        "editor": "Éditeur du site",
-        "editorName": "Nom : Lambert Sylvain",
-        "editorEmail": "Email : contact@sylvain.sh",
-        "host": "Hébergeur",
-        "hostName": "Nom : GitHub Pages",
-        "hostAddress": "Adresse : https://github.com",
-        "hostContact": "Contact : https://support.github.com",
-        "domain": "Nom de domaine",
-        "domainRegistrar": "Registrar : Namecheap, Inc.",
-        "domainName": "Domaine : flowers.sylvain.sh",
-        "ip": "Propriété intellectuelle",
-        "ipContent": "L'ensemble du contenu de ce site (textes, images, code source, design) est la propriété exclusive de son éditeur, sauf mention contraire. Toute reproduction, représentation ou diffusion, en tout ou partie, du contenu de ce site sans autorisation préalable est interdite.",
-        "liability": "Responsabilité",
-        "liabilityContent": "L'éditeur s'efforce de fournir des informations aussi précises que possible. Toutefois, il ne pourra être tenu responsable des omissions, des inexactitudes ou des carences dans la mise à jour de ces informations. L'éditeur décline toute responsabilité en cas de difficultés techniques rencontrées lors de la connexion au site.",
-        "contact": "Contact",
-        "contactContent": "Pour toute question relative aux mentions légales, vous pouvez me contacter à l'adresse : contact@sylvain.sh"
-    },
-    "privacy": {
-        "title": "Politique de confidentialité",
-        "backHome": "Retour à l'accueil",
-        "dataCollected": "Données collectées",
-        "dataCollectedContent": "Ce site ne collecte aucune donnée personnelle. Aucun formulaire de contact, aucun système d'inscription ou de connexion n'est présent sur ce site.",
-        "cookies": "Cookies et stockage local",
-        "cookiesContent": "Ce site n'utilise aucun cookie. Le seul mécanisme de stockage utilisé est le localStorage du navigateur, uniquement pour sauvegarder vos préférences : le thème (clair, sombre ou système), la disposition, l'intervalle de polling, les endpoints sauvegardés et les préréglages. Rien d'autre n'est stocké.",
-        "thirdParty": "Services tiers",
-        "thirdPartyFonts": "Ce site utilise la police Google Fonts Outfit servie localement par le framework Next.js. Aucune requête n'est envoyée aux serveurs de Google lors de votre visite.",
-        "analytics": "Analytics et tracking",
-        "analyticsContent": "Ce site n'utilise aucun service d'analytics, de tracking ou de publicité. Aucune donnée de navigation n'est collectée ou transmise à des tiers.",
-        "rights": "Vos droits",
-        "rightsContent": "Conformément au Règlement Général sur la Protection des Données (RGPD), vous disposez d'un droit d'accès, de rectification, de suppression et de portabilité de vos données. Étant donné qu'aucune donnée personnelle n'est collectée par ce site, ces droits ne trouvent pas à s'appliquer dans ce contexte.",
-        "contact": "Contact",
-        "contactContent": "Pour toute question relative à la politique de confidentialité, vous pouvez me contacter à l'adresse : contact@sylvain.sh"
-    }
+    "legal": {},
+    "privacy": {}
 }
