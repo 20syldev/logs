@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import { useTranslations } from "@/i18n/provider";
 import { useTheme } from "@/hooks/theme";
 import { useLocalStorage } from "@/hooks/storage";
@@ -286,24 +285,10 @@ function LandingPage() {
             {/* Footer */}
             <footer className="border-t py-8 px-6">
                 <div className="max-w-3xl mx-auto flex items-center justify-between text-sm text-muted-foreground">
-                    <div className="space-y-1">
-                        <p>© 2026 flowers.sylvain.sh</p>
-                        <div className="flex items-center gap-1.5 text-xs">
-                            <Link href="/legal" className="hover:text-foreground transition-colors">
-                                {t("footer.legal")}
-                            </Link>
-                            <span>·</span>
-                            <Link
-                                href="/privacy"
-                                className="hover:text-foreground transition-colors"
-                            >
-                                {t("footer.privacy")}
-                            </Link>
-                        </div>
-                    </div>
+                    <p>© 2026 logs.sylvain.sh</p>
                     <div className="flex items-center gap-3">
                         <a
-                            href="https://github.com/20syldev/flowers/releases/latest"
+                            href="https://github.com/20syldev/logs/releases/latest"
                             target="_blank"
                             rel="noopener noreferrer"
                             className="hover:text-foreground transition-colors"
@@ -311,7 +296,7 @@ function LandingPage() {
                             <BookOpen className="size-4" />
                         </a>
                         <a
-                            href="https://github.com/20syldev/flowers"
+                            href="https://github.com/20syldev/logs"
                             target="_blank"
                             rel="noopener noreferrer"
                             className="hover:text-foreground transition-colors"
