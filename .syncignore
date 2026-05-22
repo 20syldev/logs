@@ -1,0 +1,22 @@
+# Paths and patterns excluded from upstream sync
+# Glob patterns supported: *, ?, [...]
+# scripts/update.sh, .syncignore, and .lastsync are always excluded automatically
+
+# Fork-specific GitHub workflow
+.github/workflows/deploy.yml
+
+# Documentation (may diverge from upstream)
+README.md
+
+# Pages not present in this fork
+src/app/legal/*
+src/app/privacy/*
+src/app/monitor/*
+
+# Fork-specific files
+.gitignore
+endpoints.json
+src/app/layout.tsx
+src/app/page.tsx
+src/messages/en.json
+src/messages/fr.json
