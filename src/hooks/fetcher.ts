@@ -39,48 +39,90 @@ function extractEntries(raw: unknown): DataEntry[] {
     return best ?? [obj as DataEntry];
 }
 
+function buildHeaders(headers?: { key: string; value: string }[]): HeadersInit | undefined {
+    if (!headers?.length) return undefined;
+    const entries = headers
+        .filter((h) => h.key.trim())
+        .map((h) => [h.key.trim(), h.value] as [string, string]);
+    return entries.length ? Object.fromEntries(entries) : undefined;
+}
+
+interface Scheduler {
+    pause(): void;
+    resume(): void;
+    kick(): void;
+    stop(): void;
+}
+
 interface UseDataFetcherOptions {
     api: string;
     interval?: number;
+    maxEntries?: number;
+    headers?: { key: string; value: string }[];
 }
 
 /**
- * Hook that polls an API endpoint at a configurable interval and accumulates new entries.
- * Deduplicates entries by JSON comparison and provides pause/resume/clear controls.
+ * Hook that polls a JSON endpoint and accumulates new entries newest-first.
+ * Deduplicates by JSON comparison, sorts each batch by a detected timestamp,
+ * caps the buffer to `maxEntries`, and backs off exponentially on failure.
+ * `interval` and `maxEntries` update the running loop live; changing `api`
+ * restarts it and clears the entries.
  *
- * @param options - Fetcher configuration
  * @param options.api - The API endpoint URL to poll
- * @param options.interval - Polling interval in milliseconds (default: 2000)
- * @returns Object with entries, connection status, error, and control functions (pause, resume, clear)
+ * @param options.interval - Polling interval in ms (default: 2000; 0 = single shot)
+ * @param options.maxEntries - Ring-buffer cap; 0 or undefined means unlimited
+ * @param options.headers - Request headers sent with every poll
+ * @returns Object with entries, status, error, and controls (pause, resume, clear)
  */
-export function useDataFetcher({ api, interval = 2000 }: UseDataFetcherOptions) {
+export function useDataFetcher({
+    api,
+    interval = 2000,
+    maxEntries,
+    headers,
+}: UseDataFetcherOptions) {
     const [entries, setEntries] = useState<DataEntry[]>([]);
     const [status, setStatus] = useState<FetchStatus>("connecting");
     const [error, setError] = useState<string | null>(null);
+
     const entriesRef = useRef<DataEntry[]>([]);
-    const timeoutRef = useRef<ReturnType<typeof setTimeout>>(null);
+    const failuresRef = useRef(0);
     const pausedRef = useRef(false);
-    const intervalRef = useRef(interval);
+    const schedulerRef = useRef<Scheduler | null>(null);
+
     const apiRef = useRef(api);
+    const intervalRef = useRef(interval);
+    const maxEntriesRef = useRef(maxEntries);
+    const headersRef = useRef(buildHeaders(headers));
 
     useEffect(() => {
+        const previous = intervalRef.current;
         intervalRef.current = interval;
+        if (!previous && interval) schedulerRef.current?.kick();
     }, [interval]);
 
     useEffect(() => {
-        apiRef.current = api;
-    }, [api]);
+        maxEntriesRef.current = maxEntries;
+        if (maxEntries && entriesRef.current.length > maxEntries) {
+            const capped = entriesRef.current.slice(0, maxEntries);
+            entriesRef.current = capped;
+            setEntries(capped);
+        }
+    }, [maxEntries]);
 
-    const doFetch = useCallback(async (url: string) => {
+    useEffect(() => {
+        headersRef.current = buildHeaders(headers);
+    }, [headers]);
+
+    const fetchOnce = useCallback(async (url: string, signal: AbortSignal): Promise<boolean> => {
         try {
-            const response = await fetch(url);
-            if (url !== apiRef.current) return;
+            const response = await fetch(url, { signal, headers: headersRef.current });
             const raw = await response.json();
-            const data = extractEntries(raw);
+            if (signal.aborted || url !== apiRef.current || pausedRef.current) return true;
 
+            const data = extractEntries(raw);
             if (!data.length) {
                 setStatus("empty");
-                return;
+                return true;
             }
 
             const tsKey = detectFields(data[0]).timestamp;
@@ -94,79 +136,119 @@ export function useDataFetcher({ api, interval = 2000 }: UseDataFetcherOptions) 
 
             const existing = entriesRef.current;
             const serialized = new Set(existing.map((e) => JSON.stringify(e)));
-            const newEntries = data.filter((entry) => !serialized.has(JSON.stringify(entry)));
+            const fresh = data.filter((entry) => !serialized.has(JSON.stringify(entry)));
 
-            if (newEntries.length) {
-                const updated = [...newEntries, ...existing];
-                entriesRef.current = updated;
-                setEntries(updated);
+            if (fresh.length) {
+                const merged = [...fresh, ...existing];
+                const max = maxEntriesRef.current;
+                const capped = max ? merged.slice(0, max) : merged;
+                entriesRef.current = capped;
+                setEntries(capped);
             }
 
             setStatus("connected");
             setError(null);
+            return true;
         } catch (err) {
-            if (url !== apiRef.current) return;
+            if (signal.aborted || url !== apiRef.current || pausedRef.current) return true;
             setStatus("error");
             setError(err instanceof Error ? err.message : "Unknown error");
+            return false;
         }
     }, []);
 
     useEffect(() => {
+        apiRef.current = api;
         entriesRef.current = [];
+        failuresRef.current = 0;
         pausedRef.current = false;
 
         const controller = new AbortController();
+        let timer: ReturnType<typeof setTimeout> | null = null;
+        let running = false;
 
-        async function init() {
-            setEntries([]);
-            setStatus("connecting");
-            setError(null);
-
-            await doFetch(api);
-            if (controller.signal.aborted) return;
-
-            function tick() {
-                if (pausedRef.current || controller.signal.aborted || !intervalRef.current) return;
-                timeoutRef.current = setTimeout(async () => {
-                    if (controller.signal.aborted) return;
-                    await doFetch(api);
-                    tick();
-                }, intervalRef.current);
+        function clearTimer() {
+            if (timer !== null) {
+                clearTimeout(timer);
+                timer = null;
             }
-            tick();
         }
 
-        Promise.resolve().then(init);
+        function schedule(delay: number) {
+            clearTimer();
+            if (controller.signal.aborted || pausedRef.current || !delay) return;
+            timer = setTimeout(() => {
+                timer = null;
+                void run();
+            }, delay);
+        }
+
+        async function run() {
+            if (controller.signal.aborted || pausedRef.current || running) return;
+            running = true;
+            let ok: boolean;
+            try {
+                ok = await fetchOnce(apiRef.current, controller.signal);
+            } finally {
+                running = false;
+            }
+            if (controller.signal.aborted || pausedRef.current) return;
+
+            failuresRef.current = ok ? 0 : failuresRef.current + 1;
+
+            const base = intervalRef.current;
+            if (!base) return;
+
+            const delay = ok
+                ? base
+                : Math.min(base * 2 ** failuresRef.current, Math.max(base, 30000));
+            schedule(delay);
+        }
+
+        const scheduler: Scheduler = {
+            pause() {
+                pausedRef.current = true;
+                clearTimer();
+            },
+            resume() {
+                if (controller.signal.aborted) return;
+                pausedRef.current = false;
+                clearTimer();
+                void run();
+            },
+            kick() {
+                if (controller.signal.aborted || pausedRef.current || running || timer !== null) {
+                    return;
+                }
+                void run();
+            },
+            stop() {
+                controller.abort();
+                clearTimer();
+            },
+        };
+        schedulerRef.current = scheduler;
+
+        setEntries([]);
+        setStatus("connecting");
+        setError(null);
+        void run();
 
         return () => {
-            controller.abort();
-            if (timeoutRef.current) clearTimeout(timeoutRef.current);
+            scheduler.stop();
+            if (schedulerRef.current === scheduler) schedulerRef.current = null;
         };
-    }, [api, doFetch]);
+    }, [api, fetchOnce]);
 
     const pause = useCallback(() => {
-        pausedRef.current = true;
-        if (timeoutRef.current) clearTimeout(timeoutRef.current);
+        schedulerRef.current?.pause();
         setStatus("paused");
     }, []);
 
     const resume = useCallback(() => {
-        pausedRef.current = false;
         setStatus("connected");
-
-        async function restartPolling() {
-            await doFetch(apiRef.current);
-            function tick() {
-                if (pausedRef.current || !intervalRef.current) return;
-                timeoutRef.current = setTimeout(async () => {
-                    await doFetch(apiRef.current);
-                    tick();
-                }, intervalRef.current);
-            }
-            tick();
-        }
-        restartPolling();
-    }, [doFetch]);
+        schedulerRef.current?.resume();
+    }, []);
 
     const clear = useCallback(() => {
         entriesRef.current = [];
