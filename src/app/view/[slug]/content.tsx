@@ -13,7 +13,7 @@ import { detectFields } from "@/data/fields";
 import type { FieldMapping } from "@/data/fields";
 import { defaultFilters } from "@/data/presets";
 import type { Filters } from "@/data/presets";
-import { interval as defaultInterval } from "@/data/constants";
+import { interval as defaultInterval, maxEntries as defaultMaxEntries } from "@/data/constants";
 import type { ViewEndpoint, ViewOptions } from "@/data/views";
 
 export default function Content({ config }: { config: ViewOptions }) {
@@ -30,6 +30,7 @@ export default function Content({ config }: { config: ViewOptions }) {
     const { entries, status, error, pause, resume, clear } = useDataFetcher({
         api: endpoint.url,
         interval: pollingInterval,
+        maxEntries: defaultMaxEntries,
     });
 
     const detectedMapping = useMemo(() => {
