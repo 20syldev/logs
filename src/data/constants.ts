@@ -8,6 +8,15 @@ export const options = [
     { value: 30000, label: "30s" },
 ];
 
+export const maxEntries = 1000;
+
+export const maxEntriesOptions = [
+    { value: 500, label: "500" },
+    { value: 1000, label: "1000" },
+    { value: 5000, label: "5000" },
+    { value: 0, label: "∞" },
+];
+
 export type FetchStatus = "connecting" | "connected" | "paused" | "error" | "empty";
 
 export const statusDotColor: Record<FetchStatus, string> = {

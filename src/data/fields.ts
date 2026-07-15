@@ -79,6 +79,8 @@ export const knownFields: FieldDefinition[] = [
     },
 ];
 
+export const fieldTypes: FieldType[] = knownFields.map((f) => f.type);
+
 export interface FieldMapping {
     [fieldType: string]: string; // fieldType → actual key name in the JSON
 }
