@@ -13,8 +13,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
-import { Check, Trash2 } from "lucide-react";
-import type { Endpoint, SavedViewState } from "@/data/endpoints";
+import { Check, Plus, Trash2, X } from "lucide-react";
+import type { Endpoint, HeaderPair, SavedViewState } from "@/data/endpoints";
 
 interface EditorDialogProps {
     open: boolean;
@@ -88,13 +88,16 @@ export default function EditorDialog({
     const [name, setName] = useState(endpoint.name);
     const [url, setUrl] = useState(endpoint.url);
     const [confirmingDelete, setConfirmingDelete] = useState(false);
+    const [headers, setHeaders] = useState<HeaderPair[]>(endpoint.headers ?? []);
     const rememberState = !!endpoint.savedState;
 
+    const addHeader = () => setHeaders((prev) => [...prev, { key: "", value: "" }]);
+    const updateHeader = (index: number, field: keyof HeaderPair, value: string) =>
+        setHeaders((prev) => prev.map((h, i) => (i === index ? { ...h, [field]: value } : h)));
+    const removeHeader = (index: number) =>
+        setHeaders((prev) => prev.filter((_, i) => i !== index));
+
     const handleOpenChange = (value: boolean) => {
-        if (value) {
-            setName(endpoint.name);
-            setUrl(endpoint.url);
-        }
         setConfirmingDelete(false);
         onOpenChange(value);
     };
@@ -111,6 +114,7 @@ export default function EditorDialog({
         onSave({
             url: url.trim(),
             name: name.trim(),
+            headers: headers.filter((h) => h.key.trim()),
             savedState: endpoint.savedState,
         });
         handleOpenChange(false);
@@ -151,6 +155,48 @@ export default function EditorDialog({
                             onChange={(e) => setUrl(e.target.value)}
                             placeholder={t("urlPlaceholder")}
                         />
+                    </div>
+
+                    <div className="space-y-2">
+                        <div className="flex items-center justify-between">
+                            <label className="text-sm text-muted-foreground">{t("headers")}</label>
+                            <Button
+                                variant="ghost"
+                                size="sm"
+                                className="h-7 gap-1 text-xs"
+                                onClick={addHeader}
+                            >
+                                <Plus className="size-3.5" />
+                                {t("addHeader")}
+                            </Button>
+                        </div>
+                        {headers.map((header, index) => (
+                            <div key={index} className="flex items-center gap-2">
+                                <Input
+                                    value={header.key}
+                                    onChange={(e) => updateHeader(index, "key", e.target.value)}
+                                    placeholder={t("headerKey")}
+                                    className="flex-1"
+                                />
+                                <Input
+                                    value={header.value}
+                                    onChange={(e) => updateHeader(index, "value", e.target.value)}
+                                    placeholder={t("headerValue")}
+                                    className="flex-1"
+                                />
+                                <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    className="size-9 shrink-0 p-0"
+                                    onClick={() => removeHeader(index)}
+                                >
+                                    <X className="size-3.5" />
+                                </Button>
+                            </div>
+                        ))}
+                        {headers.length > 0 && (
+                            <p className="text-xs text-muted-foreground">{t("headerSecretHint")}</p>
+                        )}
                     </div>
 
                     <Separator />

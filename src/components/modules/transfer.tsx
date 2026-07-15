@@ -197,6 +197,7 @@ export default function TransferDialog() {
                                 </>
                             )}
                         </Button>
+                        <p className="text-xs text-muted-foreground">{t("headersExcluded")}</p>
                     </div>
                 )}
 

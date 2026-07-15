@@ -4,6 +4,7 @@ import { type RefObject, useState } from "react";
 import { useTranslations } from "@/i18n/provider";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Separator } from "@/components/ui/separator";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import {
     Dialog,
@@ -23,7 +24,7 @@ import {
     VolumeOff,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { statusDotColor } from "@/data/constants";
+import { maxEntriesOptions, statusDotColor } from "@/data/constants";
 import type { FetchStatus } from "@/data/constants";
 import type { DataEntry } from "@/hooks/fetcher";
 import type { Filters } from "@/data/presets";
@@ -35,6 +36,8 @@ interface ToolbarProps {
     totalCount: number;
     interval: number;
     onIntervalChange: (interval: number) => void;
+    maxEntries?: number;
+    onMaxEntriesChange?: (value: number) => void;
     onPause: () => void;
     onResume: () => void;
     onClear: () => void;
@@ -121,6 +124,8 @@ export default function Toolbar({
     searchRef,
     interval,
     onIntervalChange,
+    maxEntries,
+    onMaxEntriesChange,
     compareMode,
     onToggleCompare,
     soundEnabled,
@@ -247,65 +252,99 @@ export default function Toolbar({
                             </Tooltip>
                             <DialogContent className="max-w-xs" aria-describedby={undefined}>
                                 <DialogHeader>
-                                    <DialogTitle>{t("interval")}</DialogTitle>
+                                    <DialogTitle>{t("pollingTitle")}</DialogTitle>
                                 </DialogHeader>
-                                <div className="flex flex-wrap gap-2">
-                                    <Button
-                                        variant={interval === 0 ? "default" : "outline"}
-                                        size="sm"
-                                        className="h-8 text-xs"
-                                        onClick={() => {
-                                            onIntervalChange(0);
-                                            setIntervalOpen(false);
-                                        }}
-                                    >
-                                        {t("never")}
-                                    </Button>
-                                    {intervalPresets.map((p) => (
+                                <div className="space-y-2">
+                                    <p className="text-xs font-medium text-muted-foreground">
+                                        {t("interval")}
+                                    </p>
+                                    <div className="flex flex-wrap gap-2">
                                         <Button
-                                            key={p.value}
-                                            variant={interval === p.value ? "default" : "outline"}
+                                            variant={interval === 0 ? "default" : "outline"}
                                             size="sm"
                                             className="h-8 text-xs"
                                             onClick={() => {
-                                                onIntervalChange(p.value);
+                                                onIntervalChange(0);
                                                 setIntervalOpen(false);
                                             }}
                                         >
-                                            {p.label}
+                                            {t("never")}
                                         </Button>
-                                    ))}
-                                </div>
-                                <form
-                                    onSubmit={(e) => {
-                                        e.preventDefault();
-                                        const ms = Number(customMs);
-                                        if (ms > 0) {
-                                            onIntervalChange(ms);
-                                            setIntervalOpen(false);
-                                            setCustomMs("");
-                                        }
-                                    }}
-                                    className="flex gap-2"
-                                >
-                                    <Input
-                                        type="number"
-                                        min={100}
-                                        step={100}
-                                        placeholder={t("customPlaceholder")}
-                                        value={customMs}
-                                        onChange={(e) => setCustomMs(e.target.value)}
-                                        className="h-8 text-sm"
-                                    />
-                                    <Button
-                                        type="submit"
-                                        size="sm"
-                                        className="h-8"
-                                        disabled={!customMs || Number(customMs) < 100}
+                                        {intervalPresets.map((p) => (
+                                            <Button
+                                                key={p.value}
+                                                variant={
+                                                    interval === p.value ? "default" : "outline"
+                                                }
+                                                size="sm"
+                                                className="h-8 text-xs"
+                                                onClick={() => {
+                                                    onIntervalChange(p.value);
+                                                    setIntervalOpen(false);
+                                                }}
+                                            >
+                                                {p.label}
+                                            </Button>
+                                        ))}
+                                    </div>
+                                    <form
+                                        onSubmit={(e) => {
+                                            e.preventDefault();
+                                            const ms = Number(customMs);
+                                            if (ms > 0) {
+                                                onIntervalChange(ms);
+                                                setIntervalOpen(false);
+                                                setCustomMs("");
+                                            }
+                                        }}
+                                        className="flex gap-2"
                                     >
-                                        {tc("apply")}
-                                    </Button>
-                                </form>
+                                        <Input
+                                            type="number"
+                                            min={100}
+                                            step={100}
+                                            placeholder={t("customPlaceholder")}
+                                            value={customMs}
+                                            onChange={(e) => setCustomMs(e.target.value)}
+                                            className="h-8 text-sm"
+                                        />
+                                        <Button
+                                            type="submit"
+                                            size="sm"
+                                            className="h-8"
+                                            disabled={!customMs || Number(customMs) < 100}
+                                        >
+                                            {tc("apply")}
+                                        </Button>
+                                    </form>
+                                </div>
+                                {onMaxEntriesChange && (
+                                    <>
+                                        <Separator />
+                                        <div className="space-y-2">
+                                            <p className="text-xs font-medium text-muted-foreground">
+                                                {t("maxEntries")}
+                                            </p>
+                                            <div className="flex flex-wrap gap-2">
+                                                {maxEntriesOptions.map((o) => (
+                                                    <Button
+                                                        key={o.value}
+                                                        variant={
+                                                            (maxEntries ?? 0) === o.value
+                                                                ? "default"
+                                                                : "outline"
+                                                        }
+                                                        size="sm"
+                                                        className="h-8 text-xs"
+                                                        onClick={() => onMaxEntriesChange(o.value)}
+                                                    >
+                                                        {o.label}
+                                                    </Button>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    </>
+                                )}
                             </DialogContent>
                         </Dialog>
                         <Dialog>
