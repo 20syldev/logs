@@ -6,6 +6,16 @@ import type { Theme } from "@/hooks/theme";
 const CURRENT_VERSION = "1";
 const PREFIX = "flowers:";
 
+const defaultSettings: Settings = {
+    interval: 2000,
+    maxEntries: 1000,
+    autoScroll: true,
+    notifications: false,
+    sound: false,
+};
+
+const defaultFilters: Filters = { statuses: [], methods: [], search: "" };
+
 interface TransferPayload {
     v: 1;
     s: Settings;
@@ -20,21 +30,35 @@ interface TransferPayload {
     ap?: string;
 }
 
-// --- Base64url helpers (RFC 4648 §5, no padding) ---
-
+/**
+ * Encodes bytes as a base64url string (RFC 4648 §5) without padding.
+ *
+ * @param bytes - The raw bytes to encode
+ * @returns The base64url-encoded string
+ */
 function base64urlEncode(bytes: Uint8Array): string {
     const binStr = Array.from(bytes, (b) => String.fromCharCode(b)).join("");
     return btoa(binStr).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
 }
 
+/**
+ * Decodes a base64url string (RFC 4648 §5) back into bytes.
+ *
+ * @param str - The base64url-encoded string
+ * @returns The decoded bytes
+ */
 function base64urlDecode(str: string): Uint8Array {
     const padded = str.replace(/-/g, "+").replace(/_/g, "/");
     const binStr = atob(padded);
     return Uint8Array.from(binStr, (c) => c.charCodeAt(0));
 }
 
-// --- Compression helpers (deflate-raw via native streams) ---
-
+/**
+ * Compresses a string with raw DEFLATE via the native CompressionStream.
+ *
+ * @param data - The string to compress
+ * @returns The compressed bytes
+ */
 async function compress(data: string): Promise<Uint8Array> {
     const encoder = new TextEncoder();
     const stream = new Blob([encoder.encode(data)])
@@ -43,6 +67,12 @@ async function compress(data: string): Promise<Uint8Array> {
     return new Uint8Array(await new Response(stream).arrayBuffer());
 }
 
+/**
+ * Decompresses raw DEFLATE bytes back into a string.
+ *
+ * @param bytes - The compressed bytes
+ * @returns The decompressed string
+ */
 async function decompress(bytes: Uint8Array): Promise<string> {
     const stream = new Blob([bytes as BlobPart])
         .stream()
@@ -50,12 +80,22 @@ async function decompress(bytes: Uint8Array): Promise<string> {
     return new Response(stream).text();
 }
 
-// --- Validation ---
-
+/**
+ * Type guard for a plain (non-null, non-array) object.
+ *
+ * @param v - The value to test
+ * @returns True if the value is a non-null, non-array object
+ */
 function isObject(v: unknown): v is Record<string, unknown> {
     return typeof v === "object" && v !== null && !Array.isArray(v);
 }
 
+/**
+ * Validates that a decoded value has the shape of a transfer payload.
+ *
+ * @param data - The parsed value to validate
+ * @returns True if the value matches the expected payload schema
+ */
 function validatePayload(data: unknown): data is TransferPayload {
     if (!isObject(data)) return false;
     if (data.v !== 1) return false;
@@ -67,8 +107,13 @@ function validatePayload(data: unknown): data is TransferPayload {
     return true;
 }
 
-// --- Read helpers ---
-
+/**
+ * Reads and parses a prefixed localStorage key, falling back on miss or error.
+ *
+ * @param key - The storage key, without the "flowers:" prefix
+ * @param fallback - The value returned when the key is absent or invalid
+ * @returns The parsed value, or the fallback
+ */
 function readStorage<T>(key: string, fallback: T): T {
     try {
         const raw = localStorage.getItem(PREFIX + key);
@@ -78,16 +123,15 @@ function readStorage<T>(key: string, fallback: T): T {
     }
 }
 
-// --- Public API ---
-
-const defaultSettings: Settings = {
-    interval: 2000,
-    autoScroll: true,
-    notifications: false,
-    sound: false,
-};
-
-const defaultFilters: Filters = { statuses: [], methods: [], search: "" };
+/**
+ * Drops per-endpoint headers so secrets never land in a shareable transfer key.
+ *
+ * @param endpoints - The endpoints to sanitize
+ * @returns The endpoints with their headers removed
+ */
+function stripHeaders(endpoints: Endpoint[]): Endpoint[] {
+    return endpoints.map((ep) => ({ url: ep.url, name: ep.name, savedState: ep.savedState }));
+}
 
 /**
  * Exports all current app settings from localStorage as a compressed base64url string.
@@ -100,13 +144,17 @@ export async function exportSettings(): Promise<string> {
         v: 1,
         s: readStorage<Settings>("settings", defaultSettings),
         f: readStorage<Filters>("filters", defaultFilters),
-        fav: readStorage<Endpoint[]>("endpoints", []),
+        fav: stripHeaders(readStorage<Endpoint[]>("endpoints", [])),
         p: readStorage<Preset[]>("presets", []),
         sw: readStorage<number>("sidebarWidth", 288),
         dw: readStorage<number>("detailWidth", 384),
         la: readStorage<string>("lastApi", ""),
         t: (localStorage.getItem("theme") as Theme) ?? "system",
-        pr: readStorage<Profile[]>("profiles", []),
+        pr: readStorage<Profile[]>("profiles", []).map((p) =>
+            p.data?.endpoints
+                ? { ...p, data: { ...p.data, endpoints: stripHeaders(p.data.endpoints) } }
+                : p
+        ),
         ap: readStorage<string>("activeProfile", ""),
     };
 
@@ -157,7 +205,7 @@ export async function decodePreview(key: string): Promise<TransferPayload> {
 export async function importSettings(key: string): Promise<TransferPayload> {
     const payload = await decodePreview(key);
 
-    localStorage.setItem(PREFIX + "settings", JSON.stringify(payload.s));
+    localStorage.setItem(PREFIX + "settings", JSON.stringify({ ...defaultSettings, ...payload.s }));
     localStorage.setItem(PREFIX + "filters", JSON.stringify(payload.f));
     localStorage.setItem(PREFIX + "endpoints", JSON.stringify(payload.fav));
     localStorage.setItem(PREFIX + "presets", JSON.stringify(payload.p));
