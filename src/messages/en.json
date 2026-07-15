@@ -136,6 +136,8 @@
     "toolbar": {
         "searchPlaceholder": "Search logs...",
         "interval": "Polling interval",
+        "pollingTitle": "Polling",
+        "maxEntries": "Max entries",
         "never": "Never",
         "customPlaceholder": "Custom (ms)...",
         "pause": "Pause",
@@ -181,6 +183,20 @@
     "detail": {
         "fallbackTitle": "Details"
     },
+    "fields": {
+        "title": "Field mapping",
+        "description": "Override auto-detection for this endpoint.",
+        "auto": "Auto",
+        "none": "None",
+        "timestamp": "Timestamp",
+        "status": "Status",
+        "method": "Method",
+        "url": "URL",
+        "category": "Category",
+        "source": "Source",
+        "duration": "Duration",
+        "message": "Message"
+    },
     "stats": {
         "total": "Total",
         "errorRate": "Error rate",
@@ -212,6 +228,11 @@
             "description": "Modify the name, URL or saved state for this endpoint.",
             "namePlaceholder": "My API",
             "urlPlaceholder": "https://api.example.com/logs",
+            "headers": "Headers",
+            "addHeader": "Add",
+            "headerKey": "Header name",
+            "headerValue": "Value",
+            "headerSecretHint": "Stored locally, never exported.",
             "rememberState": "Remember current state",
             "rememberStateDescription": "Automatically syncs filters, layout and settings in real time",
             "filters": "Filters:",
@@ -243,6 +264,7 @@
         "button": "Transfer",
         "title": "Transfer settings",
         "description": "Your data never leaves your browser.",
+        "headersExcluded": "Endpoint headers are never included.",
         "export": "Export",
         "import": "Import",
         "all": "All",

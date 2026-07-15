@@ -136,6 +136,8 @@
     "toolbar": {
         "searchPlaceholder": "Rechercher dans les logs...",
         "interval": "Intervalle de requêtes",
+        "pollingTitle": "Requêtes",
+        "maxEntries": "Entrées max",
         "never": "Jamais",
         "customPlaceholder": "Personnalisé (ms)...",
         "pause": "Pause",
@@ -148,17 +150,12 @@
         "downloadFiltered": "Exporter filtrés",
         "downloadAll": "Exporter tout"
     },
-    "shortcuts": {
-        "title": "Raccourcis clavier",
-        "escape": "Fermer le panneau / Quitter le mode",
-        "jk": "Naviguer entre les entrées",
-        "space": "Pause / Reprendre",
-        "slash": "Focus sur la recherche",
-        "c": "Activer le mode comparaison",
-        "question": "Afficher cette aide"
-    },
-    "detail": {
-        "fallbackTitle": "Détails"
+    "timeline": {
+        "pinned": "{count} épinglé(s)",
+        "justNow": "À l'instant",
+        "last5min": "5 dernières minutes",
+        "lastHour": "Dernière heure",
+        "today": "Aujourd'hui"
     },
     "selector": {
         "title": "Endpoints",
@@ -174,12 +171,31 @@
         "changed": "modifié(s)",
         "identical": "Les entrées sont identiques"
     },
-    "timeline": {
-        "pinned": "{count} épinglé(s)",
-        "justNow": "À l'instant",
-        "last5min": "5 dernières minutes",
-        "lastHour": "Dernière heure",
-        "today": "Aujourd'hui"
+    "shortcuts": {
+        "title": "Raccourcis clavier",
+        "escape": "Fermer le panneau / Quitter le mode",
+        "jk": "Naviguer entre les entrées",
+        "space": "Pause / Reprendre",
+        "slash": "Focus sur la recherche",
+        "c": "Activer le mode comparaison",
+        "question": "Afficher cette aide"
+    },
+    "detail": {
+        "fallbackTitle": "Détails"
+    },
+    "fields": {
+        "title": "Correspondance des champs",
+        "description": "Surcharger la détection automatique pour cet endpoint.",
+        "auto": "Auto",
+        "none": "Aucun",
+        "timestamp": "Horodatage",
+        "status": "Statut",
+        "method": "Méthode",
+        "url": "URL",
+        "category": "Catégorie",
+        "source": "Source",
+        "duration": "Durée",
+        "message": "Message"
     },
     "stats": {
         "total": "Total",
@@ -212,6 +228,11 @@
             "description": "Modifiez le nom, l'URL ou l'état sauvegardé de cet endpoint.",
             "namePlaceholder": "Mon API",
             "urlPlaceholder": "https://api.example.com/logs",
+            "headers": "En-têtes",
+            "addHeader": "Ajouter",
+            "headerKey": "Nom de l'en-tête",
+            "headerValue": "Valeur",
+            "headerSecretHint": "Stockés localement, jamais exportés.",
             "rememberState": "Mémoriser l'état actuel",
             "rememberStateDescription": "Synchronise automatiquement les filtres, la disposition et les paramètres en temps réel",
             "filters": "Filtres :",
@@ -243,6 +264,7 @@
         "button": "Transfert",
         "title": "Transférer les paramètres",
         "description": "Vos données ne quittent jamais votre navigateur.",
+        "headersExcluded": "Les en-têtes des endpoints ne sont jamais inclus.",
         "export": "Exporter",
         "import": "Importer",
         "all": "Tous",
