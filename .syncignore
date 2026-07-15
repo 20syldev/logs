@@ -7,6 +7,7 @@
 
 # Documentation (may diverge from upstream)
 README.md
+LICENSE
 
 # Pages not present in this fork
 src/app/legal/*
@@ -18,5 +19,3 @@ src/app/monitor/*
 endpoints.json
 src/app/layout.tsx
 src/app/page.tsx
-src/messages/en.json
-src/messages/fr.json
