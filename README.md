@@ -3,7 +3,7 @@
 
 # Logs - API Request Viewer
 
-[![Version](https://custom-icon-badges.demolab.com/badge/Version%20:-v2.0.5-6479ee?logo=logs.sylvain.sh&labelColor=23272A)](https://github.com/20syldev/logs/releases/latest)
+[![Version](https://custom-icon-badges.demolab.com/badge/Version%20:-v2.0.6-6479ee?logo=logs.sylvain.sh&labelColor=23272A)](https://github.com/20syldev/logs/releases/latest)
 
 </div>
 
