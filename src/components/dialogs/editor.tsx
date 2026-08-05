@@ -20,6 +20,7 @@ interface EditorDialogProps {
     open: boolean;
     onOpenChange: (open: boolean) => void;
     endpoint: Endpoint;
+    existingUrls: string[];
     currentState: SavedViewState;
     onSave: (updated: Endpoint) => void;
     onDelete: () => void;
@@ -71,6 +72,7 @@ function StateSummary({ state }: { state: SavedViewState }) {
  * @param props.open - Whether the dialog is open
  * @param props.onOpenChange - Callback to toggle open state
  * @param props.endpoint - The endpoint being edited
+ * @param props.existingUrls - URLs of every saved endpoint, used to reject duplicates
  * @param props.currentState - The current view state to snapshot when toggling "remember"
  * @param props.onSave - Callback with the updated endpoint
  * @param props.onDelete - Callback to delete the endpoint
@@ -79,6 +81,7 @@ export default function EditorDialog({
     open,
     onOpenChange,
     endpoint,
+    existingUrls,
     currentState,
     onSave,
     onDelete,
@@ -90,6 +93,9 @@ export default function EditorDialog({
     const [confirmingDelete, setConfirmingDelete] = useState(false);
     const [headers, setHeaders] = useState<HeaderPair[]>(endpoint.headers ?? []);
     const rememberState = !!endpoint.savedState;
+
+    const trimmedUrl = url.trim();
+    const duplicateUrl = trimmedUrl !== endpoint.url && existingUrls.includes(trimmedUrl);
 
     const addHeader = () => setHeaders((prev) => [...prev, { key: "", value: "" }]);
     const updateHeader = (index: number, field: keyof HeaderPair, value: string) =>
@@ -110,9 +116,10 @@ export default function EditorDialog({
     };
 
     const handleSave = () => {
-        if (!name.trim() || !url.trim()) return;
+        if (!name.trim() || !trimmedUrl || duplicateUrl) return;
+
         onSave({
-            url: url.trim(),
+            url: trimmedUrl,
             name: name.trim(),
             headers: headers.filter((h) => h.key.trim()),
             savedState: endpoint.savedState,
@@ -154,7 +161,11 @@ export default function EditorDialog({
                             value={url}
                             onChange={(e) => setUrl(e.target.value)}
                             placeholder={t("urlPlaceholder")}
+                            aria-invalid={duplicateUrl}
                         />
+                        {duplicateUrl && (
+                            <p className="text-xs text-destructive">{t("duplicateUrl")}</p>
+                        )}
                     </div>
 
                     <div className="space-y-2">
@@ -235,7 +246,7 @@ export default function EditorDialog({
                         <Button
                             className="flex-1 sm:flex-none"
                             onClick={handleSave}
-                            disabled={!name.trim() || !url.trim()}
+                            disabled={!name.trim() || !trimmedUrl || duplicateUrl}
                         >
                             {tc("save")}
                         </Button>
